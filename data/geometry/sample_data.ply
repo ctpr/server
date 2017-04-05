@@ -1,0 +1,28 @@
+ply
+format ascii 1.0
+element vertex 4
+property float x
+property float y
+property float z
+element color 4
+property float r
+property float g
+property float b
+element face 4
+property list uchar int vertex_index
+element volume 1
+property list uchar int face_index
+end_header
+0.0 0.0 -1.0
+0.0 0.0 1.0
+0.0 2.0 0.0
+2.0 1.0 0.0
+1.0 0.0 0.0
+0.0 1.0 0.0
+0.0 0.0 1.0
+1.0 0.0 1.0
+3 0 1 2
+3 0 1 3
+3 1 2 3
+3 2 0 3
+4 0 1 2 3
