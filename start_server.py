@@ -1,13 +1,22 @@
 #!/usr/bin/env python
 
 import sys, getopt
-from bottle import get, post, request, run, static_file
+from bottle import Bottle, get, post, request, response, run, static_file
 
-@get('/')
+app = Bottle()
+
+# allow cross-origin resource sharing
+@app.hook('after_request')
+def cors():
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+
+@app.get('/')
 def hello():
     return "Hello SimScale! This is a tiny REST file server :)\n"
 
-@get('/geometry/<filename:re:.*>')
+@app.get('/geometry/<filename:re:.*>')
 def send_file(filename):
     if "" != filename:
         return static_file(filename, root='/data/geometry')
@@ -32,7 +41,8 @@ def main(argv):
         elif opt in ("-p", "--port"):
             m_port = int(arg)
 
-    run(host='0.0.0.0', port=m_port)
+    print "HTTP Bottle Server running on port: "+str(m_port)
+    run(app, host='0.0.0.0', port=m_port)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
