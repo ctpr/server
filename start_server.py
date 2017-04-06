@@ -26,6 +26,7 @@ def hello():
 @app.route('/geometry/<filename:re:.*>', method=['OPTIONS', 'GET'])
 def send_file(filename):
     if "" != filename:
+        response.set_header('Access-Control-Allow-Origin', '*')
         return static_file(filename, root='/data/geometry')
     else:
         return { "success" : False, "error" : "Requested geometry called without a filename" }
