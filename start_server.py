@@ -3,14 +3,21 @@
 import sys, getopt
 from bottle import Bottle, get, post, request, response, run, static_file
 
-app = Bottle()
-
 # allow cross-origin resource sharing
-@app.hook('after_request')
-def cors():
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
-    response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+class CORS(object):
+    name = 'CORS'
+    api = 2
+    def apply(self, fn, context):
+        def _cors(*args, **kwargs):
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+            if request.method != 'OPTIONS':
+                # actual request; reply with the actual response
+                return fn(*args, **kwargs)
+        return _cors
+
+app = Bottle()
 
 @app.get('/')
 def hello():
@@ -40,6 +47,8 @@ def main(argv):
             sys.exit()
         elif opt in ("-p", "--port"):
             m_port = int(arg)
+
+    app.install(CORS())
 
     print "HTTP Bottle Server running on port: "+str(m_port)
     run(app, host='0.0.0.0', port=m_port)
