@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys, getopt
-from bottle import Bottle, get, post, request, response, run, static_file
+from bottle import Bottle, route, get, post, request, response, run, static_file
 
 # allow cross-origin resource sharing
 class CORS(object):
@@ -19,11 +19,11 @@ class CORS(object):
 
 app = Bottle()
 
-@app.get('/')
+@app.route('/', method=['OPTIONS', 'GET'])
 def hello():
     return "Hello SimScale! This is a tiny REST file server :)\n"
 
-@app.get('/geometry/<filename:re:.*>')
+@app.route('/geometry/<filename:re:.*>', method=['OPTIONS', 'GET'])
 def send_file(filename):
     if "" != filename:
         return static_file(filename, root='/data/geometry')
