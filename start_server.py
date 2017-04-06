@@ -23,11 +23,15 @@ app = Bottle()
 def hello():
     return "Hello SimScale! This is a tiny REST file server :)\n"
 
+def static_file_crossdomain(*args, **kwargs):
+    response = static_file(*args, **kwargs)
+    response.set_header('Access-Control-allow-Origin', '*')
+    return response
+
 @app.route('/geometry/<filename:re:.*>', method=['OPTIONS', 'GET'])
 def send_file(filename):
     if "" != filename:
-        response.set_header('Access-Control-Allow-Origin', '*')
-        return static_file(filename, root='/data/geometry')
+        return static_file_crossdomain(filename, root='/data/geometry')
     else:
         return { "success" : False, "error" : "Requested geometry called without a filename" }
 
