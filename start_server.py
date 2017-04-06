@@ -14,17 +14,20 @@ def send_file(filename):
     else:
         return { "success" : False, "error" : "Requested geometry called without a filename" }
 
+def print_help():
+    print __file__+' -p --port <port> [9000]'
+
 def main(argv):
     m_port = 9000
     try:
         opts, args = getopt.getopt(argv,"hp:",["port="])
     except getopt.GetoptError:
-        print __file__+' -i <inputfile> -o <outputfile>'
+        print_help()
         sys.exit(1)
 
     for opt, arg in opts:
         if opt == '-h':
-            print __file__+' -p[--port] <port>'
+            print_help()
             sys.exit()
         elif opt in ("-p", "--port"):
             m_port = int(arg)
