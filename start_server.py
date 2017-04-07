@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, getopt
+import os, sys, getopt
 from bottle import Bottle, route, get, post, request, response, run, static_file
 
 # allow cross-origin resource sharing
@@ -19,24 +19,20 @@ class CORS(object):
 
 app = Bottle()
 
-@app.route('/', method=['OPTIONS', 'GET'])
-def hello():
-    return "Hello SimScale! This is a tiny REST file server :)\n"
-
+# manually insert cross-origin resource sharing for static file response
 def static_file_crossdomain(*args, **kwargs):
     response = static_file(*args, **kwargs)
     response.set_header('Access-Control-allow-Origin', '*')
     return response
 
-@app.route('/data/geometry/<filename:re:.*>', method=['OPTIONS', 'GET'])
-def send_file(filename):
-    if "" != filename:
-        return static_file_crossdomain(filename, root='/data/geometry')
-    else:
-        return { "success" : False, "error" : "Requested geometry called without a filename" }
+# Generic server message
+@app.route('/', method=['OPTIONS', 'GET'])
+def hello():
+    return "Hello SimScale! This is a tiny REST file server :)\n"
 
+# List all available geometry paths
 @app.route('/geometries', method=['OPTIONS', 'GET'])
-def geometries_list(filename):
+def geometries_list():
     geometry_paths = []
     geometry_files = os.listdir( '/data/geometry' )
     for geometry_file in geometry_files:
@@ -44,6 +40,15 @@ def geometries_list(filename):
             geometry_paths.append( geometry_file )
     return { "success" : True, "paths" : geometry_paths }
 
+# Return geometry file (or error message)
+@app.route('/geometries/<filename:re:.*>', method=['OPTIONS', 'GET'])
+def send_file(filename):
+    if "" != filename:
+        return static_file_crossdomain(filename, root='/data/geometry')
+    else:
+        return { "success" : False, "error" : "Requested geometry called without a filename" }
+
+# Help function
 def print_help():
     print __file__+' -p --port <port> [9000]'
 
