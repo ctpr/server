@@ -28,12 +28,21 @@ def static_file_crossdomain(*args, **kwargs):
     response.set_header('Access-Control-allow-Origin', '*')
     return response
 
-@app.route('/geometry/<filename:re:.*>', method=['OPTIONS', 'GET'])
+@app.route('/data/geometry/<filename:re:.*>', method=['OPTIONS', 'GET'])
 def send_file(filename):
     if "" != filename:
         return static_file_crossdomain(filename, root='/data/geometry')
     else:
         return { "success" : False, "error" : "Requested geometry called without a filename" }
+
+@app.route('/geometries', method=['OPTIONS', 'GET'])
+def geometries_list(filename):
+    geometry_paths = []
+    geometry_files = os.listdir( '/data/geometry' )
+    for geometry_file in geometry_files:
+        if ".ply" == os.path.splitext( geometry_file )[1]:
+            geometry_paths.append( geometry_file )
+    return { "success" : True, "paths" : geometry_paths }
 
 def print_help():
     print __file__+' -p --port <port> [9000]'
