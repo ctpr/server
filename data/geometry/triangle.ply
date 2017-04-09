@@ -10,9 +10,10 @@ element face 2
 property list uchar int vertex_index
 end_header
 0.0 0.0 -1.0
-0.0 0.0 1.0
-0.0 2.0 0.0
+1.0 0.0 1.0
+-1.0 2.0 0.0
 0.42
 0.84
 0.21
 3 0 1 2
+3 2 1 0

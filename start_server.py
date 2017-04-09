@@ -28,7 +28,7 @@ def static_file_crossdomain(*args, **kwargs):
 # Generic server message
 @app.route('/', method=['OPTIONS', 'GET'])
 def hello():
-    return "Hello SimScale! This is a tiny REST file server :)\n"
+    return "You found the data server! Congratulations :)\n"
 
 # List all available geometry paths
 @app.route('/geometries', method=['OPTIONS', 'GET'])
